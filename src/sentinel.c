@@ -3242,7 +3242,8 @@ char *sentinelVoteLeader(sentinelRedisInstance *master, uint64_t req_epoch, char
             (unsigned long long) sentinel.current_epoch);
     }
 
-    if (master->leader_epoch < req_epoch && sentinel.current_epoch <= req_epoch)
+    if (master->leader_epoch < req_epoch && sentinel.current_epoch <= req_epoch &&
+            mstime() - master->failover_start_time > master->failover_timeout*2)
     {
         sdsfree(master->leader);
         master->leader = sdsnew(req_runid);
